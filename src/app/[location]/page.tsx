@@ -3,25 +3,29 @@ import { getForecast } from '@/utils/getForecast'
 
 
 type Props = {
-  params: {
+  params: Promise<{
     location: string
-  },
-  searchParams: {
+  }>,
+  searchParams: Promise<{
     name: string
-  }
+  }>
 }
 
-export function generateMetadata({searchParams} : Props) {
+export async function generateMetadata({searchParams} : Props) {
+  const name = (await searchParams).name
+
   return {
-    title: `날씨 앱 - ${searchParams.name}`,
+    title: `날씨 앱 - ${name}`,
     description : '날씨를 알려드립니다',
   }
 }
 
 export default async function Detail({ params, searchParams }: Props) {
-  const name = searchParams.name
+  const location = (await params).location
+  const name = (await searchParams).name
 
-  const res = await getForecast(params.location)
+
+  const res = await getForecast(location)
 
   return <>
   <h1>{name}의 3일 예보</h1>
